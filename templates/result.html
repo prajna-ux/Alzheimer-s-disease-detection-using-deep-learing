@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f4f4f9;
+            margin: 0;
+        }
+        .result-container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .uploaded-image {
+            max-width: 50vw; /* Adjust this to make the image larger */
+            height:auto;
+            border-radius: 10px;
+            margin: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+        .result-text {
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="result-container">
+        <h2>Prediction Result</h2>
+        <img src="{{ url_for('static', filename='uploads/' + uploaded_image) }}" alt="Uploaded MRI Image" class="uploaded-image">
+        <p class="result-text">Diagnosis: {{ predicted_class }}</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with Doctor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+        }
+        .chat-container {
+            width: 80%;
+            max-width: 600px;
+            margin: 30px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .chat-box {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .message {
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .doctor-message {
+            background-color: #e0f7fa;
+            text-align: left;
+        }
+        .user-message {
+            background-color: #e1bee7;
+            text-align: right;
+        }
+        .input-group {
+            display: flex;
+            justify-content: space-between;
+        }
+        input[type="text"] {
+            width: 60%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        input[type="file"] {
+            width: 30%;
+            padding: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h2>Chat with Doctor</h2>
+
+    <div class="chat-container">
+        <div class="chat-box" id="chat-box">
+            <p><strong>Doctor:</strong> {{ doctor_response if doctor_response else "Hello! How can I assist you?" }}</p>
+        </div>
+
+        <form action="{{ url_for('chat') }}" method="POST" enctype="multipart/form-data" id="chat-form">
+            <div class="input-group">
+                <input type="text" name="user_message" id="user-message" placeholder="Type your message" required>
+                <input type="file" name="file" id="file-input">
+                <button type="submit">Send</button>
+            </div>
+        </form>
+
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+
+    <script>
+        const chatForm = document.getElementById("chat-form");
+        const chatBox = document.getElementById("chat-box");
+        const userMessageInput = document.getElementById("user-message");
+        const fileInput = document.getElementById("file-input");
+    
+        chatForm.addEventListener("submit", async function(event) {
+            event.preventDefault(); // Prevent page reload
+            const userMessage = userMessageInput.value.trim();
+            const file = fileInput.files[0];
+        
+            // Add user message to the chatbox
+            if (userMessage || file) {
+                const userMessageHTML = `
+                    <div class="message user-message">
+                        <strong>You:</strong> ${userMessage || "Image uploaded for diagnosis"}
+                    </div>`;
+                chatBox.innerHTML += userMessageHTML;
+        
+                userMessageInput.value = ""; // Clear the input field
+                fileInput.value = ""; // Clear file input
+        
+                // Scroll to the bottom of the chatbox
+                chatBox.scrollTop = chatBox.scrollHeight;
+        
+                // Create FormData for POST request
+                const formData = new FormData();
+                if (userMessage) formData.append('user_message', userMessage);
+                if (file) formData.append('file', file);
+        
+                try {
+                    // Make a POST request to the backend
+                    const response = await fetch("/chat", {
+                        method: "POST",
+                        body: formData
+                    });
+        
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch response");
+                    }
+        
+                    const data = await response.json();
+        
+                    // Add doctor response to the chatbox
+                    const doctorResponseHTML = `
+                        <div class="message doctor-message">
+                            <strong>Doctor:</strong> ${data.doctor_response}
+                        </div>`;
+                    chatBox.innerHTML += doctorResponseHTML;
+        
+                    // Scroll to the bottom of the chatbox
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                } catch (error) {
+                    console.error("Error:", error);
+                    chatBox.innerHTML += `
+                        <div class="message doctor-message">
+                            <strong>Doctor:</strong> Unable to process your request. Please try again later.
+                        </div>`;
+                }
+            }
+        });        
+    </script>
+    
+</body>
+</html>

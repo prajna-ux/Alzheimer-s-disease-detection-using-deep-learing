@@ -1,0 +1,55 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+.navbar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 10px;
+}
+
+.nav-link {
+    text-decoration: none;
+    margin: 0 10px;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.nav-link:hover {
+    color: #ffd700;
+}
+
+.background {
+    height: 100%;
+    width: 100%;
+    background-size: cover;
+    background-position: center;
+    animation: changeBackground 10s infinite;
+}
+
+.content {
+    text-align: center;
+    color: white;
+    font-family: Arial, sans-serif;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.content h1 {
+    font-size: 48px;
+    font-weight: bold;
+    text-shadow: 2px 2px 5px black;
+}
+
+@keyframes changeBackground {
+    0% { background-image: url('brain1.jpg'); }
+    33% { background-image: url('brain2.jpg'); }
+    66% { background-image: url('brain3.jpg'); }
+}
